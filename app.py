@@ -59,14 +59,24 @@ if not os.path.exists(DATA_PATH):
     st.stop()
 
 # --- Navigation Sidebar ---
-st.sidebar.success("✅ System Ready")
-st.sidebar.markdown("### Navigation")
+st.sidebar.image("https://cdn-icons-png.flaticon.com/512/2103/2103299.png", width=60)
+
+# Dataset Management in Sidebar
+st.sidebar.markdown("### 📂 Dataset")
+st.sidebar.success("✅ Dataset Loaded")
+if st.sidebar.button("🗑️ Remove Dataset"):
+    if os.path.exists(DATA_PATH):
+        os.remove(DATA_PATH)
+    st.rerun()
+
+st.sidebar.divider()
+
+st.sidebar.markdown("### 🧭 Navigation")
 phase = st.sidebar.radio("Select Execution Phase:", [
     "📊 Phase 1: Preprocessing",
     "🧠 Phase 2: PINN Development",
     "🎯 Phase 3: TL Evaluation",
-    "⚙️ Phase 3C: Hard-IC PINN",
-    "🔬 Cross-Episode Validation"
+    "⚙️ Phase 3C: Hard-IC PINN"
 ])
 
 def read_text_file(filepath):
@@ -186,22 +196,3 @@ elif phase == "⚙️ Phase 3C: Hard-IC PINN":
     with tab2:
         report = read_text_file("outputs/phase3c/phase3c_report.txt")
         st.text_area("Analysis Report", report, height=400)
-
-# --- Cross-Episode Validation ---
-elif phase == "🔬 Cross-Episode Validation":
-    st.header("Cross-Episode Validation")
-    st.caption("Scalability tests across extreme high and low initial glucose environments.")
-    
-    if st.button("🚀 Run Validation Suite"):
-        run_script_stream("run_cross_episode_v2.py")
-
-    tab1, tab2, tab3 = st.tabs(["⚖️ Glucose Comparison", "📈 Generalization", "📑 Executive Summary"])
-    with tab1:
-        if os.path.exists("outputs/cross_episode_validation/glucose_rmse_comparison.png"):
-            st.image("outputs/cross_episode_validation/glucose_rmse_comparison.png", use_container_width=True)
-    with tab2:
-        if os.path.exists("outputs/cross_episode_validation/glucose_predictions.png"):
-            st.image("outputs/cross_episode_validation/glucose_predictions.png", use_container_width=True)
-    with tab3:
-        report = read_text_file("outputs/cross_episode_validation/comparison_report.txt")
-        st.text_area("Performance Metrics", report, height=450)
